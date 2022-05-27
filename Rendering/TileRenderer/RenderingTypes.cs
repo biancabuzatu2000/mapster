@@ -107,8 +107,8 @@ public struct GeoFeature : BaseShape
 
     public GeoFeature(ReadOnlySpan<Coordinate> c, MapFeatureData feature)
     {
-        IsPolygon = feature.Type == GeometryType.Polygon;
-        var naturalKey = feature.Properties.FirstOrDefault(x => x.Key == "natural").Value;
+        IsPolygon = feature.Type == GeometryType.Polygon;    
+        var naturalKey = feature.Properties.FirstOrDefault(x => x.Key == TerrainTypes.natural).Value;
         Type = GeoFeatureType.Unknown;
         if (naturalKey != null)
         {
@@ -202,7 +202,8 @@ public struct PopulatedPlace : BaseShape
         for (var i = 0; i < c.Length; i++)
             ScreenCoordinates[i] = new PointF((float)MercatorProjection.lonToX(c[i].Longitude),
                 (float)MercatorProjection.latToY(c[i].Latitude));
-        var name = feature.Properties.FirstOrDefault(x => x.Key == "name").Value;
+        // Am folosit data din enum in loc de string
+        var name = feature.Properties.FirstOrDefault(x => x.Key == TerrainTypes.name).Value;
 
         if (feature.Label.IsEmpty)
         {
@@ -224,7 +225,8 @@ public struct PopulatedPlace : BaseShape
             return false;
         }
         foreach (var entry in feature.Properties)
-            if (entry.Key.StartsWith("place"))
+        // Am folosit data din enum in loc de string
+            if (entry.Key == TerrainTypes.place)
             {
                 if (entry.Value.StartsWith("city") || entry.Value.StartsWith("town") ||
                     entry.Value.StartsWith("locality") || entry.Value.StartsWith("hamlet"))
@@ -264,11 +266,13 @@ public struct Border : BaseShape
         var foundLevel = false;
         foreach (var entry in feature.Properties)
         {
-            if (entry.Key.StartsWith("boundary") && entry.Value.StartsWith("administrative"))
+        // Am folosit data din enum in loc de string
+            if (entry.Key == TerrainTypes.boundary && entry.Value.StartsWith("administrative"))
             {
                 foundBoundary = true;
             }
-            if (entry.Key.StartsWith("admin_level") && entry.Value == "2")
+        // Am folosit data din enum in loc de string
+            if (entry.Key == TerrainTypes.admin_level && entry.Value == "2")
             {
                 foundLevel = true;
             }
